@@ -6,6 +6,7 @@
 #define sizeY 8
 #define diff 10
 
+//TODO napravi go taka che da ima znachenie kolko e visoko
 float grid[sizeX][sizeY] = {
     {74, 73, 72, 69, 63, 56, 49, 46},
     {71, 71, 69, 67, 62, 53, 45, 41},
@@ -16,7 +17,6 @@ float grid[sizeX][sizeY] = {
     {71, 68, 64, 60, 52, 41, 30, 24},
     {73, 71, 67, 62, 54, 43, 33, 27}
 };
-float bgrid[sizeX][sizeY];
 
 typedef struct Cell{
     int x;
@@ -88,33 +88,6 @@ double get_diff(int x1, int y1, int x2, int y2){
     return abs(grid[x1][y1] - grid[x2][y2]);
 }
 
-/*void generate_path(int startX, int startY) {
-    dist[startX][startX] = 0;
-    for(int step = 0;step < sizeX * sizeY;step ++) {
-        for(int x = 0;x < sizeX; x++) {
-            for(int y = 0;y < sizeY; y++) {
-                if(dist[x][y] == step) {
-                    if(x - 1 >= 0 && (dist[x-1][y] == -1 || dist[x-1][y] >= step + 1) && get_diff(x, y, x-1, y  ) < diff){
-                            dist[x-1][y] = step + 1;
-                    }
-
-                    if(y - 1 >= 0 && (dist[x][y-1] == -1 || dist[x][y-1] >= step + 1) && get_diff(x, y, x,   y-1) < diff){
-                            dist[x][y-1] = step + 1;
-                    }
-
-                    if(x + 1 < sizeX && (dist[x+1][y] == -1 || dist[x+1][y] >= step + 1) && get_diff(x, y, x+1, y) < diff){
-                            dist[x+1][y] = step + 1;
-                    }
-
-                    if(y + 1 < sizeY && (dist[x][y+1] == -1 || dist[x][y+1] >= step + 1) && get_diff(x, y, x, y+1) < diff){
-                            dist[x][y+1] = step + 1;
-                    }
-                }
-            }
-        }
-    }
-}*/
-
 void find_path(int startX, int startY, int endX, int endY){
     int** visited = calloc(sizeof(int*), sizeX);
     Cell** prev = calloc(sizeof(Cell*), sizeX);
@@ -139,35 +112,35 @@ void find_path(int startX, int startY, int endX, int endY){
         int x = node.x;
         int y = node.y;
 
-        if(x-1 >= 0 && visited[x-1][y] == 0){
+        if(x-1 >= 0 && visited[x-1][y] == 0 && get_diff(x, y, x-1, y) < diff){
             visited[x-1][y] = 1;
             enQueue(q, x-1, y);
 
-            Cell cell = {x-1, y};
+            Cell cell = {x, y};
             prev[x-1][y] = cell;
         }
 
-        if(x+1 < sizeX && visited[x+1][y] == 0){
+        if(x+1 < sizeX && visited[x+1][y] == 0 && get_diff(x, y, x+1, y) < diff){
             visited[x+1][y] = 1;
             enQueue(q, x+1, y);
 
-            Cell cell = {x+1, y};
+            Cell cell = {x, y};
             prev[x+1][y] = cell;
         }
 
-        if(y-1 >= 0 && visited[x][y-1] == 0){
+        if(y-1 >= 0 && visited[x][y-1] == 0 && get_diff(x, y, x, y-1) < diff){
             visited[x][y-1] = 1;
             enQueue(q, x, y-1);
 
-            Cell cell = {x, y-1};
+            Cell cell = {x, y};
             prev[x][y-1] = cell;
         }
 
-        if(y+1 < sizeY && visited[x][y+1] == 0){
+        if(y+1 < sizeY && visited[x][y+1] == 0 && get_diff(x, y, x, y+1) < diff){
             visited[x][y+1] = 1;
             enQueue(q, x, y+1);
 
-            Cell cell = {x, y+1};
+            Cell cell = {x, y};
             prev[x][y+1] = cell;
         }
     }
@@ -181,11 +154,30 @@ void find_path(int startX, int startY, int endX, int endY){
         printf("\n");
     }
 
-    /*Cell* path = calloc(sizeX * sizeY, sizeof(Cell));
+    Cell* path = calloc(sizeX, sizeof(Cell));
     Cell at = {endX, endY};
+    int index = 0;
+    int capacity = sizeX;
+
     for(at; at.x != -1; at = prev[at.x][at.y]){
-        printf("%d \n", at.x);
-    }*/
+        if(index == capacity){
+            path = realloc(path, capacity * 2);
+            capacity *= 2;
+        }
+
+        path[index] = at;
+        index++;
+    }
+
+    for(int i=0;i<index/2;i++){
+        Cell t = path[i];
+        path[i] = path[index-i-1];
+        path[index-i-1] = t;
+    }
+
+    for(int i=0;i<index;i++){
+        printf("%d %d \n", path[i].x, path[i].y);
+    }
 }
 
 int main(){
