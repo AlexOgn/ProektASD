@@ -6,7 +6,6 @@
 #define sizeY 8
 #define diff 10
 
-//TODO napravi go taka che da ima znachenie kolko e visoko
 float grid[sizeX][sizeY] = {
     {74, 73, 72, 69, 63, 56, 49, 46},
     {71, 71, 69, 67, 62, 53, 45, 41},
