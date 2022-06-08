@@ -10,10 +10,10 @@
 float grid[sizeX][sizeY] = {
     {74, 73, 72, 69, 63, 56, 49, 46},
     {71, 71, 69, 67, 62, 53, 45, 41},
-    {67, 65, 65, 63, 58, 48, 38, 33},
+    {67, 65, 100, 90, 80, 70, 60, 50},
     {64, 62, 60, 59, 53, 42, 31, 26},
     {64, 61, 58, 56, 50, 38, 26, 21},
-    {66, 63, 60, 57, 50, 38, 26, 21},
+    {66, 63, 60, 57, 50, 40, 30, 21},
     {71, 68, 64, 60, 52, 41, 30, 24},
     {73, 71, 67, 62, 54, 43, 33, 27}
 };
@@ -112,7 +112,7 @@ void find_path(int startX, int startY, int endX, int endY){
         int x = node.x;
         int y = node.y;
 
-        if(x-1 >= 0 && visited[x-1][y] == 0 && get_diff(x, y, x-1, y) < diff){
+        if(x-1 >= 0 && visited[x-1][y] == 0 && get_diff(x, y, x-1, y) <= diff){
             visited[x-1][y] = 1;
             enQueue(q, x-1, y);
 
@@ -120,7 +120,7 @@ void find_path(int startX, int startY, int endX, int endY){
             prev[x-1][y] = cell;
         }
 
-        if(x+1 < sizeX && visited[x+1][y] == 0 && get_diff(x, y, x+1, y) < diff){
+        if(x+1 < sizeX && visited[x+1][y] == 0 && get_diff(x, y, x+1, y) <= diff){
             visited[x+1][y] = 1;
             enQueue(q, x+1, y);
 
@@ -128,7 +128,7 @@ void find_path(int startX, int startY, int endX, int endY){
             prev[x+1][y] = cell;
         }
 
-        if(y-1 >= 0 && visited[x][y-1] == 0 && get_diff(x, y, x, y-1) < diff){
+        if(y-1 >= 0 && visited[x][y-1] == 0 && get_diff(x, y, x, y-1) <= diff){
             visited[x][y-1] = 1;
             enQueue(q, x, y-1);
 
@@ -136,7 +136,7 @@ void find_path(int startX, int startY, int endX, int endY){
             prev[x][y-1] = cell;
         }
 
-        if(y+1 < sizeY && visited[x][y+1] == 0 && get_diff(x, y, x, y+1) < diff){
+        if(y+1 < sizeY && visited[x][y+1] == 0 && get_diff(x, y, x, y+1) <= diff){
             visited[x][y+1] = 1;
             enQueue(q, x, y+1);
 
@@ -160,13 +160,21 @@ void find_path(int startX, int startY, int endX, int endY){
     int capacity = sizeX;
 
     for(at; at.x != -1; at = prev[at.x][at.y]){
-        if(index == capacity){
-            path = realloc(path, capacity * 2);
+        if(index == capacity-1){
             capacity *= 2;
+            path = realloc(path, capacity * sizeof(Cell));
         }
+
+        printf("asdfadsf:");
+        printf("%d %d \n", at.x, at.y);
 
         path[index] = at;
         index++;
+    }
+
+    printf("\n\n\n");
+    for(int i=0;i<index;i++){
+        printf("%d %d \n", path[i].x, path[i].y);
     }
 
     for(int i=0;i<index/2;i++){
@@ -175,13 +183,11 @@ void find_path(int startX, int startY, int endX, int endY){
         path[index-i-1] = t;
     }
 
-    for(int i=0;i<index;i++){
-        printf("%d %d \n", path[i].x, path[i].y);
-    }
+
 }
 
 int main(){
-    find_path(2, 2, 5, 5);
+    find_path(0, 0, 2, 2);
 
 
 }
