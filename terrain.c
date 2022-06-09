@@ -5,13 +5,13 @@
 #define sizeY 1024
 #define diff 5
 
-//grid i buffergrid, koeto shte polzvame za smooth()
 //steps - kolko puti da se smooth-ne terena
 //E - range na random
 float grid[sizeX][sizeY];
 float bgrid[sizeX][sizeY];
 int steps = 8;
 int E = 60;
+int durability = 99999;
 
 //nqkva random funkciq deto vzeh ot neta shtoto bqh mnogo
 //ubeden che moita ne bachka
@@ -25,6 +25,9 @@ int random(int upper, int lower){
 void smooth(){
     for(int x = 0;x < sizeX;x ++) {
         for(int y = 0;y < sizeY;y ++) {
+            if(grid[x][y] < 0){
+                grid[x][y] = 0;
+            }
             int sum=grid[x][y], cells=1;
             if(x<sizeX-1){
                 sum+=grid[x+1][y];cells++;
@@ -113,15 +116,16 @@ void ds(int sx, int sy, int size){
 }
 
 
-//////////////////////////TUMOR/////////////////////////////
-//////////////////////////TUMOR/////////////////////////////
-//////////////////////////TUMOR/////////////////////////////
-//////////////////////////TUMOR/////////////////////////////
-//////////////////////////TUMOR/////////////////////////////
-//////////////////////////TUMOR/////////////////////////////
-//////////////////////////TUMOR/////////////////////////////
-//////////////////////////TUMOR/////////////////////////////
-//////////////////////////TUMOR/////////////////////////////
+//////////////////////////TUMOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////TUMOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////TUMOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////TUMOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////TUMOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////TUMOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////TUMOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////TUMOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////TUMOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
 typedef struct Cell{
     int x;
     int y;
@@ -193,7 +197,7 @@ double get_diff(int x1, int y1, int x2, int y2){
 }
 
 int is_water(int x, int y){
-    return (grid[x][y] < 75 && grid[x][y] > 0);
+    return (grid[x][y] < 75 && grid[x][y] >= 0);
 }
 
 void find_path(int startX, int startY, int endX, int endY){
@@ -220,36 +224,56 @@ void find_path(int startX, int startY, int endX, int endY){
         int x = node.x;
         int y = node.y;
 
-        if(x-1 >= 0 && visited[x-1][y] == 0 && get_diff(x, y, x-1, y) <= diff && is_water(x-1, y) == 0){
-            visited[x-1][y] = 1;
-            enQueue(q, x-1, y);
+        if(x-1 >= 0 && visited[x-1][y] == 0){
+            if(is_water(x-1, y) == 1 && durability > 1){
+                durability--;
+            }
+            if(get_diff(x, y, x-1, y) <= diff){
+                visited[x-1][y] = 1;
+                enQueue(q, x-1, y);
 
-            Cell cell = {x, y};
-            prev[x-1][y] = cell;
+                Cell cell = {x, y};
+                prev[x-1][y] = cell;
+            }
         }
 
-        if(x+1 < sizeX && visited[x+1][y] == 0 && get_diff(x, y, x+1, y) <= diff && is_water(x+1, y) == 0){
-            visited[x+1][y] = 1;
-            enQueue(q, x+1, y);
+        if(x+1 < sizeX && visited[x+1][y] == 0){
+            if(is_water(x+1, y) == 1 && durability > 1){
+                durability--;
+            }
+            if(get_diff(x, y, x+1, y) <= diff){
+                visited[x+1][y] = 1;
+                enQueue(q, x+1, y);
 
-            Cell cell = {x, y};
-            prev[x+1][y] = cell;
+                Cell cell = {x, y};
+                prev[x+1][y] = cell;
+            }
         }
 
-        if(y-1 >= 0 && visited[x][y-1] == 0 && get_diff(x, y, x, y-1) <= diff && is_water(x, y-1) == 0){
-            visited[x][y-1] = 1;
-            enQueue(q, x, y-1);
+        if(y-1 >= 0 && visited[x][y-1] == 0){
+            if(is_water(x, y-1) == 1 && durability > 1){
+                durability--;
+            }
+            if(get_diff(x, y, x, y-1) <= diff){
+                visited[x][y-1] = 1;
+                enQueue(q, x, y-1);
 
-            Cell cell = {x, y};
-            prev[x][y-1] = cell;
+                Cell cell = {x, y};
+                prev[x][y-1] = cell;
+            }
         }
 
-        if(y+1 < sizeY && visited[x][y+1] == 0 && get_diff(x, y, x, y+1) <= diff && is_water(x, y+1) == 0){
-            visited[x][y+1] = 1;
-            enQueue(q, x, y+1);
+        if(y+1 < sizeY && visited[x][y+1] == 0){
+            if(is_water(x, y+1) == 1 && durability > 1){
+                durability--;
+            }
+            if(get_diff(x, y, x, y+1) <= diff){
+                visited[x][y+1] = 1;
+                enQueue(q, x, y+1);
 
-            Cell cell = {x, y};
-            prev[x][y+1] = cell;
+                Cell cell = {x, y};
+                prev[x][y+1] = cell;
+            }
         }
     }
 
@@ -277,7 +301,7 @@ void find_path(int startX, int startY, int endX, int endY){
     }
 
     for(int i=0;i<index;i++){
-        grid[path[i].x][path[i].y] = -1;
+        grid[path[i].x][path[i].y] = -2;
     }
 }
 
@@ -297,9 +321,8 @@ int main(){
     grid[0][0] = 128;
     grid[sizeX-1][0] = 128;
     grid[0][sizeY-1] = 128;
-    grid[sizeX-1][sizeY-1] = 75;
+    grid[sizeX-1][sizeY-1] = 128;
 
-    //vikame go na 0, 0 i ot tam pochva rekursiqta
     ds(0, 0, sizeX);
 
     //vika se smooth()
@@ -307,7 +330,7 @@ int main(){
         smooth();
     }
 
-    find_path(0, 0, 0, 1000);
+    find_path(0, 0, 0, sizeX-1);
 
     //otvarq se faila
     FILE * terrain = fopen("Terrain.ppm","wb");
@@ -324,7 +347,7 @@ int main(){
                 if(k>305){
                     k=305;
                 }
-                if(k == -1){
+                if(k == -2){
                     ///puteka
                     fprintf(terrain,"%d %d %d ", 0,0,0);
                 }else if(k < 75)
