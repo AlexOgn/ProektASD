@@ -11,7 +11,7 @@ float grid[sizeX][sizeY];
 float bgrid[sizeX][sizeY];
 int steps = 8;
 int E = 60;
-int durability = 99999;
+int durability = 500;
 
 //nqkva random funkciq deto vzeh ot neta shtoto bqh mnogo
 //ubeden che moita ne bachka
@@ -131,6 +131,11 @@ typedef struct Cell{
     int y;
 } Cell;
 
+typedef struct Path{
+    Cell* path;
+    int size;
+} Path;
+
 typedef struct QNode{
     Cell cell;
     struct QNode* next;
@@ -200,7 +205,7 @@ int is_water(int x, int y){
     return (grid[x][y] < 75 && grid[x][y] >= 0);
 }
 
-void find_path(int startX, int startY, int endX, int endY){
+Path find_path_water(int startX, int startY, int endX, int endY){
     int** visited = calloc(sizeof(int*), sizeX);
     Cell** prev = calloc(sizeof(Cell*), sizeX);
     for(int i=0;i<sizeX;i++){
@@ -225,9 +230,6 @@ void find_path(int startX, int startY, int endX, int endY){
         int y = node.y;
 
         if(x-1 >= 0 && visited[x-1][y] == 0){
-            if(is_water(x-1, y) == 1 && durability > 1){
-                durability--;
-            }
             if(get_diff(x, y, x-1, y) <= diff){
                 visited[x-1][y] = 1;
                 enQueue(q, x-1, y);
@@ -238,9 +240,6 @@ void find_path(int startX, int startY, int endX, int endY){
         }
 
         if(x+1 < sizeX && visited[x+1][y] == 0){
-            if(is_water(x+1, y) == 1 && durability > 1){
-                durability--;
-            }
             if(get_diff(x, y, x+1, y) <= diff){
                 visited[x+1][y] = 1;
                 enQueue(q, x+1, y);
@@ -251,9 +250,6 @@ void find_path(int startX, int startY, int endX, int endY){
         }
 
         if(y-1 >= 0 && visited[x][y-1] == 0){
-            if(is_water(x, y-1) == 1 && durability > 1){
-                durability--;
-            }
             if(get_diff(x, y, x, y-1) <= diff){
                 visited[x][y-1] = 1;
                 enQueue(q, x, y-1);
@@ -264,9 +260,6 @@ void find_path(int startX, int startY, int endX, int endY){
         }
 
         if(y+1 < sizeY && visited[x][y+1] == 0){
-            if(is_water(x, y+1) == 1 && durability > 1){
-                durability--;
-            }
             if(get_diff(x, y, x, y+1) <= diff){
                 visited[x][y+1] = 1;
                 enQueue(q, x, y+1);
@@ -294,14 +287,137 @@ void find_path(int startX, int startY, int endX, int endY){
         index++;
     }
 
+    for(int i=0;i<sizeX;i++){
+        free(visited[i]);
+        free(prev[i]);
+    }
+    free(visited);
+    free(prev);
+
     for(int i=0;i<index/2;i++){
         Cell t = path[i];
         path[i] = path[index-i-1];
         path[index-i-1] = t;
     }
 
+    Path r_path = {path, index};
+
     for(int i=0;i<index;i++){
-        grid[path[i].x][path[i].y] = -2;
+        if(is_water(path[i].x, path[i].y) == 1){
+            if(durability <= 0){
+                printf("schupi se");
+                r_path.size = 0;
+                break;
+            }
+            durability--;
+        }
+    }
+
+
+
+    return r_path;
+}
+
+Path find_path_ground(int startX, int startY, int endX, int endY){
+    int** visited = calloc(sizeof(int*), sizeX);
+    Cell** prev = calloc(sizeof(Cell*), sizeX);
+    for(int i=0;i<sizeX;i++){
+        visited[i] = calloc(sizeY, sizeof(int));
+        prev[i] = calloc(sizeY, sizeof(Cell));
+    }
+
+    for(int i=0;i<sizeX;i++){
+        for(int j=0;j<sizeY;j++){
+            prev[i][j].x = -1;
+            prev[i][j].y = -1;
+        }
+    }
+
+    Queue *q = queue_init();
+    enQueue(q, startX, startY);
+    visited[startX][startY] = 1;
+
+    while(!queue_is_empty(q)){
+        Cell node = deQueue(q);
+        int x = node.x;
+        int y = node.y;
+
+        if(x-1 >= 0 && visited[x-1][y] == 0 && get_diff(x, y, x-1, y) <= diff && is_water(x-1, y) == 0){
+            visited[x-1][y] = 1;
+            enQueue(q, x-1, y);
+
+            Cell cell = {x, y};
+            prev[x-1][y] = cell;
+        }
+
+        if(x+1 < sizeX && visited[x+1][y] == 0 && get_diff(x, y, x+1, y) <= diff && is_water(x+1, y) == 0){
+            visited[x+1][y] = 1;
+            enQueue(q, x+1, y);
+
+            Cell cell = {x, y};
+            prev[x+1][y] = cell;
+        }
+
+        if(y-1 >= 0 && visited[x][y-1] == 0 && get_diff(x, y, x, y-1) <= diff && is_water(x, y-1) == 0){
+            visited[x][y-1] = 1;
+            enQueue(q, x, y-1);
+
+            Cell cell = {x, y};
+            prev[x][y-1] = cell;
+        }
+
+        if(y+1 < sizeY && visited[x][y+1] == 0 && get_diff(x, y, x, y+1) <= diff && is_water(x, y+1) == 0){
+            visited[x][y+1] = 1;
+            enQueue(q, x, y+1);
+
+            Cell cell = {x, y};
+            prev[x][y+1] = cell;
+        }
+    }
+
+    free(q);
+
+    Cell* path = calloc(sizeX, sizeof(Cell));
+    Cell at = {endX, endY};
+    int index = 0;
+    int capacity = sizeX;
+
+    for(at; at.x != -1; at = prev[at.x][at.y]){
+        if(index == capacity-1){
+            capacity *= 2;
+            path = realloc(path, capacity * sizeof(Cell));
+        }
+
+        path[index] = at;
+        index++;
+    }
+
+    for(int i=0;i<sizeX;i++){
+        free(visited[i]);
+        free(prev[i]);
+    }
+    free(visited);
+    free(prev);
+
+    for(int i=0;i<index/2;i++){
+        Cell t = path[i];
+        path[i] = path[index-i-1];
+        path[index-i-1] = t;
+    }
+
+    Path r_path = {path, index};
+
+    return r_path;
+}
+
+void find_path(int startX, int startY, int endX, int endY){
+    Path path_water = find_path_water(startX, startY, endX, endY);
+    Path path_ground = find_path_ground(startX, startY, endX, endY);
+
+    Path path = (path_water.size > 0) ? (path_ground.size > 0) ? (path_water.size > path_ground.size) ? path_ground : path_water : path_water : path_ground;
+
+    for(int i=0;i<path.size;i++){
+        grid[path.path[i].x][path.path[i].y] = -2;
     }
 }
 
@@ -330,7 +446,7 @@ int main(){
         smooth();
     }
 
-    find_path(0, 0, 0, sizeX-1);
+    find_path(0, 0, 1000, 1000);
 
     //otvarq se faila
     FILE * terrain = fopen("Terrain.ppm","wb");
