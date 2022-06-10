@@ -87,37 +87,72 @@ Path find_path_water(int startX, int startY, int endX, int endY){
         int y = node.y;
 
         if(x-1 >= 0 && visited[x-1][y] == 0){
-            if(get_diff(x, y, x-1, y) <= diff){
+            if(is_water(x-1, y) == 0){
+                if(get_diff(x, y, x-1, y) <= diff){
+                    visited[x-1][y] = 1;
+                    enQueue(q, x-1, y);
+
+                    Cell cell = {x, y};
+                    prev[x-1][y] = cell;
+                }
+            }else{
                 visited[x-1][y] = 1;
                 enQueue(q, x-1, y);
 
                 Cell cell = {x, y};
                 prev[x-1][y] = cell;
             }
+
         }
 
         if(x+1 < sizeX && visited[x+1][y] == 0){
-            if(get_diff(x, y, x+1, y) <= diff){
+            if(is_water(x+1, y) == 0){
+                if(get_diff(x, y, x+1, y) <= diff){
+                    visited[x+1][y] = 1;
+                    enQueue(q, x+1, y);
+
+                    Cell cell = {x, y};
+                    prev[x+1][y] = cell;
+                }
+            }else{
                 visited[x+1][y] = 1;
                 enQueue(q, x+1, y);
 
                 Cell cell = {x, y};
                 prev[x+1][y] = cell;
             }
+
         }
 
         if(y-1 >= 0 && visited[x][y-1] == 0){
-            if(get_diff(x, y, x, y-1) <= diff){
+            if(is_water(x, y-1) == 0){
+                if(get_diff(x, y, x, y-1) <= diff){
+                    visited[x][y-1] = 1;
+                    enQueue(q, x, y-1);
+
+                    Cell cell = {x, y};
+                    prev[x][y-1] = cell;
+                }
+            }else{
                 visited[x][y-1] = 1;
                 enQueue(q, x, y-1);
 
                 Cell cell = {x, y};
                 prev[x][y-1] = cell;
             }
+
         }
 
         if(y+1 < sizeY && visited[x][y+1] == 0){
-            if(get_diff(x, y, x, y+1) <= diff){
+            if(is_water(x, y+1) == 0){
+                if(get_diff(x, y, x, y+1) <= diff){
+                    visited[x][y+1] = 1;
+                    enQueue(q, x, y+1);
+
+                    Cell cell = {x, y};
+                    prev[x][y+1] = cell;
+                }
+            }else{
                 visited[x][y+1] = 1;
                 enQueue(q, x, y+1);
 
@@ -273,7 +308,19 @@ void find_path(int startX, int startY, int endX, int endY){
 
     Path path = (path_water.size > 0) ? (path_ground.size > 0) ? (path_water.size > path_ground.size) ? path_ground : path_water : path_water : path_ground;
 
-    for(int i=0;i<path.size;i++){
-        grid[path.path[i].x][path.path[i].y] = -2;
+    for(int k=0;k<path.size;k++){
+        int i = path.path[k].x;
+        int j = path.path[k].y;
+        grid[i][j] = -2;
+        grid[i][j-1] = -2;
+        grid[i][j+1] = -2;
+
+        grid[i+1][j] = -2;
+        grid[i+1][j+1] = -2;
+        grid[i+1][j-1] = -2;
+
+        grid[i-1][j] = -2;
+        grid[i-1][j+1] = -2;
+        grid[i-1][j-1] = -2;
     }
 }
