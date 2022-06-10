@@ -49,4 +49,4 @@ Add the start cell to the queue.
     * **A path where use of boat is prohibited**
 6. **Finally, we compare the length of each path and choose the shorter one**
 
-
+Ai nazdrave na vsichki
