@@ -12,7 +12,10 @@ At it's essense it's a recursive algorithm that has 2 steps:
 - Square step
   - Takes three edges and averages them then adds a random value
 
-### Pathfinding using BFS in steps
+### Pathfinding using BFS
+![GIF](https://upload.wikimedia.org/wikipedia/commons/4/46/Animated_BFS.gif)  
+Animated example of a breadth-first search.  
+**Black:** _explored_, **grey:** _queued to be explored later on_
 ### Setup
 Add the start cell to the queue.
 
@@ -30,7 +33,7 @@ Add the start cell to the queue.
 ### Rules for pathfinding
 1. **The difference in height between points in the path cannot be greater than 5.**
 2. **If path includes water, a boat is used which has a certain durability.**
-3. **If the durability becomes 0 it cannot be used anymore and the path has to go around lakes.**
+3. **If the durability becomes 0 it cannot be used anymore and the path has to go around water.**
 4. **The difference in height doesn't matter if a boat is being used.**
 5. **We then generate 2 paths:**
     * **A path where use of boat is permitted**
