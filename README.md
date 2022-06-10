@@ -18,7 +18,7 @@ Add the start cell to the queue.
 
 ### Recursive part
 1. Pop first element from the queue.
-2. Check which of its adjacent cells are valid according to the (rules)[].
+2. Check which of its adjacent cells are valid according to the [rules](https://github.com/AlexOgn/ProektASD/tree/main#rules-for-pathfinding).
 3. Add all valid cells to the queue.
 4. Save current coordinates to the `previous` array, which is used to know where we came from.
 
