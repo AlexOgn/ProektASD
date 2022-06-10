@@ -1,4 +1,12 @@
 # Terrain generation and finding a path between 2 points
+
+## How to run
+- Clone the repository
+- Use the command `make`
+- Use the command `./asdf`
+- Open `Terrain.ppm` 
+ > Note: Not all image editors support .ppm, I use GIMP
+
 ## How does it work
 ### Diamond-Square generates a height map
 ### Pathfinding algorithm finds path between 2 points in the generated height map
@@ -16,6 +24,7 @@ At it's essense it's a recursive algorithm that has 2 steps:
 ![GIF](https://upload.wikimedia.org/wikipedia/commons/4/46/Animated_BFS.gif)  
 Animated example of a breadth-first search.  
 **Black:** _explored_, **grey:** _queued to be explored later on_
+
 ### Setup
 Add the start cell to the queue.
 
