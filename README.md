@@ -8,8 +8,8 @@
  > Note: Not all image editors support .ppm, I use GIMP
 
 ## How does it work
-### Diamond-Square generates a height map
-### Pathfinding algorithm finds path between 2 points in the generated height map
+- Diamond-Square generates a height map
+- Pathfinding algorithm finds path between 2 points in the generated height map
 
 ## Algorithms
 ### Diamond Square
@@ -23,7 +23,7 @@ At it's essense it's a recursive algorithm that has 2 steps:
 ### Pathfinding using BFS
 ![GIF](https://upload.wikimedia.org/wikipedia/commons/4/46/Animated_BFS.gif)  
 Animated example of a breadth-first search.  
-**Black:** _explored_, **grey:** _queued to be explored later on_
+**Black:** _explored_, **gray:** _queued to be explored later on_
 
 ### Setup
 Add the start cell to the queue.
