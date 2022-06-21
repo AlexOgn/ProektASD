@@ -1,6 +1,6 @@
 CC = gcc
-FILES = terrain.c pathing.c main.c
-TARGET = asdf
+FILES = terrain.c pathing.c libattopng.c main.c 
+TARGET = generator
 
 all: $(TARGET)
 
