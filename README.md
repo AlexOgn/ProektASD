@@ -1,11 +1,11 @@
 # Terrain generation and finding a path between 2 points
 
 ## How to run
-- Clone the repository
-- Use the command `make`
-- Use the command `./asdf`
-- Open `Terrain.ppm` 
- > Note: Not all image editors support .ppm, I use GIMP
+- [Clone the repository](https://support.atlassian.com/bitbucket-cloud/docs/clone-a-git-repository/)
+- Run `make` to build the project
+- Run `generator.exe`
+- Open `Terrain.png` 
+> Note: If you want to directly run the code after compiling use `make -f run`
 
 ## How does it work
 - Diamond-Square generates a height map
